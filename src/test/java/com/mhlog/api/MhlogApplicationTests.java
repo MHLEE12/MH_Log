@@ -1,4 +1,4 @@
-package com.mhlog;
+package com.mhlog.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
