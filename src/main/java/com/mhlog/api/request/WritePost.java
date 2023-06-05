@@ -19,7 +19,7 @@ public class WritePost {
     private String content;
 
     @Builder
-    private WritePost(String title, String content) {
+    public WritePost(String title, String content) {
         this.title = title;
         this.content = content;
     }
