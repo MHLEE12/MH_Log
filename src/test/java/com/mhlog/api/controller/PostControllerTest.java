@@ -38,6 +38,9 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     void setup() {
         // 한글 깨짐 문제 해결
@@ -60,8 +63,7 @@ class PostControllerTest {
                 .content("내용입니다.")
                 .build();
 
-        ObjectMapper om = new ObjectMapper();
-        String json = om.writeValueAsString(request);
+        String json = objectMapper.writeValueAsString(request);
 
         // expected
         mockMvc.perform(post("/posts")
@@ -69,7 +71,7 @@ class PostControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().string("{}"))
+                .andExpect(content().string(""))
                 .andDo(MockMvcResultHandlers.print());
 
     }
@@ -77,13 +79,21 @@ class PostControllerTest {
 //    @Test
 //    @DisplayName("/posts 요청시 제목값은 필수입니다.")
 //    void titleBlankTest() throws Exception {
+//
+//        // given
+//        WritePost request = WritePost.builder()
+//                .content("내용입니다.")
+//                .build();
+//
+//        String json = objectMapper.writeValueAsString(request);
+//
 //        // expected
 //        mockMvc.perform(post("/posts")
 //                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content("{\"title\": \"제목\", \"content\": \"내용입니다.\"}")
+//                        .content(json)
 //                )
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.title").value("제목"))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$.code").value("400"))
 ////                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
 ////                .andExpect(jsonPath("$.validation.title").value("제목을 입력해주세요."))
 //                .andDo(MockMvcResultHandlers.print());
@@ -93,10 +103,19 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청시 DB에 값이 저장된다.")
     void postSaveTest() throws Exception {
+
+        // given
+        WritePost request = WritePost.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
         // when
         mockMvc.perform(post("/posts")
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다.\", \"content\": \"내용입니다.\"}")
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
