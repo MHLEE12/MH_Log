@@ -14,8 +14,11 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public void write(WritePost writePost) {
-        Post post = new Post(writePost.getTitle(), writePost.getContent());
-        postRepository.save(post);
+    public Post write(WritePost writePost) {
+        Post post = Post.builder()
+                        .title(writePost.getTitle())
+                        .content(writePost.getContent())
+                        .build();
+        return postRepository.save(post);
     }
 }
