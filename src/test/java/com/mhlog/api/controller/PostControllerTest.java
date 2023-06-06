@@ -23,6 +23,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -72,7 +73,7 @@ class PostControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(""))
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
 
     }
 
@@ -118,7 +119,7 @@ class PostControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
 
         // then
         assertEquals(1L, postRepository.count());
@@ -126,5 +127,25 @@ class PostControllerTest {
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회")
+    void selectOnePost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        mockMvc.perform(get("/post/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(post.getId()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.content").value(post.getContent()))
+                .andDo(print());
     }
 }
