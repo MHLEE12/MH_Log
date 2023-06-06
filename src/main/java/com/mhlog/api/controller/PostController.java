@@ -27,6 +27,15 @@ public class PostController {
         return postService.write(request);
     }
 
-    
+    /**
+     * 글 한개 조회
+     */
+    @GetMapping("/post/{postId}")
+    public Post get(@PathVariable Long postId) {
+
+        Post post = postService.get(postId);
+
+        return post;
+    }
 
 }
