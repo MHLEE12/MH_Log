@@ -1,5 +1,6 @@
 package com.mhlog.api.controller;
 
+import com.mhlog.api.domain.Post;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,11 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public Map<String, String> post(@RequestBody @Valid WritePost request) {
+    public Post post(@RequestBody @Valid WritePost request) {
 
-        postService.write(request);
-
-        return Map.of();
+        return postService.write(request);
     }
+
+    
 
 }
