@@ -2,6 +2,7 @@ package com.mhlog.api.controller;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.request.WritePost;
+import com.mhlog.api.response.PostResponse;
 import com.mhlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +32,11 @@ public class PostController {
      * 글 한개 조회
      */
     @GetMapping("/post/{postId}")
-    public Post get(@PathVariable Long postId) {
+    public PostResponse get(@PathVariable Long postId) {
 
-        Post post = postService.get(postId);
+        PostResponse response = postService.get(postId);
 
-        return post;
+        return response;
     }
 
 }

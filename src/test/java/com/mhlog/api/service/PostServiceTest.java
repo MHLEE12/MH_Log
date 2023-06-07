@@ -3,6 +3,7 @@ package com.mhlog.api.service;
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
 import com.mhlog.api.request.WritePost;
+import com.mhlog.api.response.PostResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,12 +74,12 @@ class PostServiceTest {
         postRepository.save(requestPost);
 
         // when
-        Post post = postService.get(requestPost.getId());
+        PostResponse response = postService.get(requestPost.getId());
 
         // then
-        assertNotNull(post);
-        assertEquals("제목", post.getTitle());
-        assertEquals("내용", post.getContent());
+        assertNotNull(response);
+        assertEquals("제목", response.getTitle());
+        assertEquals("내용", response.getContent());
 
     }
 }
