@@ -39,4 +39,11 @@ public class PostController {
         return response;
     }
 
+    /**
+     * 여러개 글 조회
+     */
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
+    }
 }
