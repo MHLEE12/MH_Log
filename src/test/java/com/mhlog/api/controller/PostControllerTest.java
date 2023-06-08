@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
 import com.mhlog.api.request.WritePost;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -147,7 +149,35 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.title").value("1234567890"))
                 .andExpect(jsonPath("$.content").value(post.getContent()))
                 .andDo(print());
-
-
     }
+
+    @Test
+    @DisplayName("글 여러개 조회")
+    void selectManyPosts() throws Exception {
+        // given
+        Post post1 = Post.builder()
+                .title("제목1")
+                .content("내용1")
+                .build();
+        postRepository.save(post1);
+
+        Post post2 = Post.builder()
+                .title("제목2")
+                .content("내용2")
+                .build();
+        postRepository.save(post2);
+
+        // expected
+        mockMvc.perform(get("/posts")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Matchers.is(2)))
+                .andExpect(jsonPath("$.[0].id").value(post1.getId()))
+                .andExpect(jsonPath("$.[0].title").value("제목1"))
+                .andExpect(jsonPath("$.[0].content").value("내용1"))
+                .andDo(print());
+    }
+
+
+
 }
