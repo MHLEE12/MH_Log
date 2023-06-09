@@ -2,10 +2,14 @@ package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
+import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,8 +44,11 @@ public class PostService {
         return postResponse;
     }
 
-    public List<PostResponse> getList() {
-        return postRepository.findAll().stream()
+    public List<PostResponse> getList(PostSearch postSearch) {
+
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+
+        return postRepository.getList(postSearch).stream()
                 .map(post -> new PostResponse(post))
                 .collect(Collectors.toList());
     }

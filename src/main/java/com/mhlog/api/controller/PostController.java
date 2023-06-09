@@ -1,19 +1,16 @@
 package com.mhlog.api.controller;
 
 import com.mhlog.api.domain.Post;
+import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
 import com.mhlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -43,7 +40,8 @@ public class PostController {
      * 여러개 글 조회
      */
     @GetMapping("/posts")
-    public List<PostResponse> getList() {
-        return postService.getList();
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+
+        return postService.getList(postSearch);
     }
 }
