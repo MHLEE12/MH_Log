@@ -2,6 +2,12 @@ server:
   port: 9090
 
 spring:
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: false
+        default-page-size: 5
+
   h2:
     console:
       enabled: true
