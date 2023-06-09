@@ -2,6 +2,7 @@ package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
+import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
 import org.assertj.core.api.Assertions;
@@ -10,8 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,25 +92,27 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 여러개 조회")
-    void selectManyPosts() {
+    @DisplayName("글 1페이지 조회")
+    void selectPosts() {
         // given
-        postRepository.saveAll(List.of(
-                Post.builder()
-                        .title("제목1")
-                        .content("내용1")
-                        .build(),
-                Post.builder()
-                        .title("제목2")
-                        .content("내용2")
-                        .build()
-        ));
+        List<Post> requestPosts = IntStream.range(1, 31)
+                .mapToObj(i -> Post.builder()
+                        .title("제목 - " + i)
+                        .content("내용 - " + i)
+                        .build())
+                        .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
+
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+                .build();
 
         // when
-        List<PostResponse> posts = postService.getList();
+        List<PostResponse> posts = postService.getList(postSearch);
 
         // then
-        assertEquals(2L, posts.size());
+        assertEquals(10, posts.size());
+        assertEquals("제목 - 30", posts.get(0).getTitle());
 
     }
 
