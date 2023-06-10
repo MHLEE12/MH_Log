@@ -2,6 +2,7 @@ package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
+import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -116,5 +118,29 @@ class PostServiceTest {
 
     }
 
+    @Test
+    @DisplayName("글 제목 수정")
+    void updatePost() {
+        // given
+        Post post = Post.builder()
+                        .title("제목")
+                        .content("내용")
+                        .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                                .title("제목 수정")
+                                .content("내용 수정")
+                                .build();
+
+        // when
+        postService.updatePost(post.getId(), postEdit);
+
+        // then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id= " + post.getId()));
+
+        assertEquals("제목 수정", changePost.getTitle());
+    }
 
 }
