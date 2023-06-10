@@ -2,6 +2,7 @@ package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
+import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,5 +53,15 @@ public class PostService {
         return postRepository.getList(postSearch).stream()
                 .map(post -> new PostResponse(post))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updatePost(Long id, PostEdit postEdit) {
+
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        post.change(postEdit.getTitle(), postEdit.getContent());
+
     }
 }
