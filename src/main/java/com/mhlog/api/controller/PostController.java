@@ -54,5 +54,11 @@ public class PostController {
         postService.updatePost(postId, request);
     }
 
-
+    /**
+     * 글 삭제
+     */
+    @DeleteMapping("/post/{postId}")
+    public void delete(@PathVariable Long postId) {
+        postService.delete(postId);
+    }
 }
