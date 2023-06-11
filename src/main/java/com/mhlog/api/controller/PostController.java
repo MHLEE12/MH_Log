@@ -1,6 +1,7 @@
 package com.mhlog.api.controller;
 
 import com.mhlog.api.domain.Post;
+import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
@@ -44,4 +45,14 @@ public class PostController {
 
         return postService.getList(postSearch);
     }
+
+    /**
+     * 글 수정
+     */
+    @PatchMapping("/post/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        postService.updatePost(postId, request);
+    }
+
+
 }
