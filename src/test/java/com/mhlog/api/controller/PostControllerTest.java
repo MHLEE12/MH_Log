@@ -3,6 +3,7 @@ package com.mhlog.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.repository.PostRepository;
+import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.WritePost;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -198,6 +199,29 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.length()", Matchers.is(10)))
                 .andExpect(jsonPath("$[0].title").value("제목 - 30"))
                 .andExpect(jsonPath("$[0].content").value("내용 - 30"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void updatePostTitle() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목 수정")
+                .content("내용")
+                .build();
+
+        // expected
+        mockMvc.perform(patch("/post/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
