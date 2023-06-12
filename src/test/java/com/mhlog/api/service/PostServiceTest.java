@@ -6,7 +6,7 @@ import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,15 +61,19 @@ class PostServiceTest {
     @DisplayName("글 1개 조회X")
     void selectOnePost_X() {
         // given
-        Long postId = 1L;
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
 
-        // when
-//        Post post = postService.get(postId);
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> postService.get(postId));
+        postRepository.save(post);
 
-        // then
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 글입니다.");
+        // expected
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+            postService.get(post.getId() + 1L);
+        }, "예외처리가 잘못 되었습니다.");
+
+        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
     }
 
     @Test
