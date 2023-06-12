@@ -1,23 +1,19 @@
 package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
+import com.mhlog.api.exception.PostNotFound;
 import com.mhlog.api.repository.PostRepository;
 import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
 import com.mhlog.api.response.PostResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,11 +65,9 @@ class PostServiceTest {
         postRepository.save(post);
 
         // expected
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(PostNotFound.class, () -> {
             postService.get(post.getId() + 1L);
-        }, "예외처리가 잘못 되었습니다.");
-
-        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
+        });
     }
 
     @Test
@@ -174,8 +168,8 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 삭제")
-    void deletePost() {
+    @DisplayName("게시글 삭제 - 존재하는 글")
+    void deletePost_O() {
         // given
         Post post = Post.builder()
                 .title("제목")
@@ -188,6 +182,22 @@ class PostServiceTest {
 
         // then
         assertEquals(0, postRepository.count());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 존재하지 않는 글")
+    void deletePost_X() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
     }
 
 }
