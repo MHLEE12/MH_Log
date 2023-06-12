@@ -2,6 +2,7 @@ package com.mhlog.api.service;
 
 import com.mhlog.api.domain.Post;
 import com.mhlog.api.domain.PostEditor;
+import com.mhlog.api.exception.PostNotFound;
 import com.mhlog.api.repository.PostRepository;
 import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
@@ -37,7 +38,7 @@ public class PostService {
     public PostResponse get(Long postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         PostResponse postResponse = PostResponse.builder()
                 .id(post.getId())
@@ -61,7 +62,7 @@ public class PostService {
     public void updatePost(Long id, PostEdit postEdit) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(() -> new PostNotFound());
 
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
@@ -74,7 +75,7 @@ public class PostService {
 
     public void delete(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(() -> new PostNotFound());
 
         postRepository.delete(post);
     }
