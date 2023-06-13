@@ -30,7 +30,7 @@ public class WritePost {
 
         // 단어 필터
         if(title.contains("욕설")) {
-            throw new InvalidRequest();
+            throw new InvalidRequest("title", "제목에 욕설을 포함할 수 없습니다.");
         }
     }
 }
