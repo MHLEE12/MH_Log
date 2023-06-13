@@ -140,7 +140,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 1개 조회")
-    void selectOnePost() throws Exception {
+    void selectOnePost_O() throws Exception {
         // given
         Post post = Post.builder()
                 .title("123456789012345")
@@ -155,6 +155,17 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.id").value(post.getId()))
                 .andExpect(jsonPath("$.title").value("1234567890"))
                 .andExpect(jsonPath("$.content").value(post.getContent()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    void selectOnePost_X() throws Exception {
+
+        // expected
+        mockMvc.perform(get("/post/{postId}", 1L)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -224,6 +235,23 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+    @Test
+    @DisplayName("존재하지 않는 게시글 수정")
+    void updatePost_X() throws Exception {
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                        .title("제목")
+                        .content("내용")
+                        .build();
+
+        // expected
+        mockMvc.perform(patch("/post/{postId}", 1L)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+
+    }
 
     @Test
     @DisplayName("글 삭제")
@@ -242,4 +270,24 @@ class PostControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("게시글 작성시 제목에 '욕설'는 포함될 수 없다.")
+    void exceptionTest() throws Exception {
+        // given
+        WritePost request = WritePost.builder()
+                .title("나는 욕설 작성중")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isNotFound())
+                .andDo(print());
+
+    }
 }
