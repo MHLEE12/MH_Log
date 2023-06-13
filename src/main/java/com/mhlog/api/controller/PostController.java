@@ -1,6 +1,7 @@
 package com.mhlog.api.controller;
 
 import com.mhlog.api.domain.Post;
+import com.mhlog.api.exception.InvalidRequest;
 import com.mhlog.api.request.PostEdit;
 import com.mhlog.api.request.PostSearch;
 import com.mhlog.api.request.WritePost;
@@ -22,6 +23,7 @@ public class PostController {
 
     @PostMapping("/posts")
     public Post post(@RequestBody @Valid WritePost request) {
+        request.validate();
 
         return postService.write(request);
     }
