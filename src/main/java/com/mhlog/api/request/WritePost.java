@@ -1,9 +1,8 @@
 package com.mhlog.api.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mhlog.api.exception.InvalidRequest;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -19,11 +18,19 @@ public class WritePost {
     private String content;
 
     @Builder
-    public WritePost(String title, String content) {
+    public WritePost(@JsonProperty("title") String title, @JsonProperty("content") String content) {
         this.title = title;
         this.content = content;
     }
 
     public WritePost() {
+    }
+
+    public void validate() {
+
+        // 단어 필터
+        if(title.contains("욕설")) {
+            throw new InvalidRequest();
+        }
     }
 }
